@@ -11,7 +11,7 @@ public class TestService {
 
     private final RestTemplate restTemplate;
 
-    private static final String CIRCUIT_INSTANCES = "lchMsa"; //application.yml 인스턴스명
+    private static final String CIRCUIT_INSTANCES = "lch"; //application.yml 인스턴스명
 
     @CircuitBreaker(name = CIRCUIT_INSTANCES, fallbackMethod = "getLchMsaSupportFallBack")
     public String getLchMsaSupport(String param) {
