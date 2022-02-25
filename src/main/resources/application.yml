@@ -1,0 +1,47 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: lch
+  profiles:
+    active: dev
+  config:
+    import: optional:configserver:http://localhost:8888
+
+#resilience https://resilience4j.readme.io/docs/circuitbreaker
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 100                      #서킷 상태가 close일때 결과 기록의한 window 크기
+        permittedNumberOfCallsInHalfOpenState: 10   #반 개방 상태일때 받아들일 요청 갯수 지정
+        waitDurationInOpenState: 10000              #서킷브레이커다 open 에서 half-open 전환 까지 대기 시간 ms
+        failureRateThreshold: 60                    #실패율 실패율 보다 클경우 circuit을 open 한다
+        eventConsumerBufferSize: 10                 #이벤트 발생시 크기 지정
+        registerHealthIndicator: true               #actuator를 통해 circuitbraker상태 확인
+      instance:
+        lchMsa: #인스턴스명
+          baseConfig: default
+
+
+
+#actuator config
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: always #actuator에서 디테일한 정보들을 확인하기 위해 설정
+  health:
+    circuitbeaker:
+      enabled: true #actuator를 통해 circuitbraker 상태를 확인하기 위해 설정
+
+#eureka
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
